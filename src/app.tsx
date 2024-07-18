@@ -3,6 +3,7 @@ import { NoteCard } from './components/note-card'
 import { NewNoteCard } from './components/new-note-card'
 
 
+
 export function App() {
   return (
 
@@ -22,11 +23,10 @@ export function App() {
 
 	<div className="grid grid-cols-3 gap-6 auto-rows-[250px]">
 		<NewNoteCard/>
-    <NoteCard/>
-    <NoteCard/>
-    <NoteCard/>
-    <NoteCard/>
-
+    <NoteCard note={{
+      date: new Date(),
+      content: 'new note'
+    }}/>
 	</div>
 </div>
   )
