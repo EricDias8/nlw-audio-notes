@@ -6,7 +6,9 @@ import { toast } from "sonner";
 
   interface NewNoteCardProps{
     onNoteCreated: (content: string) => void
-  }
+ }
+
+ let SpeechRecognition: SpeechRecognition | null = null
 
 export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
   const [shouldShowOnBoarding, setShouldShowOnBoarding] = useState(true);
@@ -43,14 +45,49 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
   }
 
   function handleStartRecording() {
+
+    const isSpeechRecognitionAPIAvailable = 'SpeechRecognition' in window
+      || 'webkitSpeechRecognition' in window
+    
+      if (!isSpeechRecognitionAPIAvailable) {
+        alert('infelizmente seu navegador não suporta a API de gravação')
+        return
+      }
+
     setIsRecording(true);
-  }
+    setShouldShowOnBoarding(false);
+  
 
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition
+
+    SpeechRecognition = new SpeechRecognitionAPI()
+
+    SpeechRecognition.lang = 'pt-BR'
+    SpeechRecognition.continuous = true
+    SpeechRecognition.maxAlternatives = 1
+    SpeechRecognition.interimResults = true
+
+    SpeechRecognition.onresult = (event) => {
+      const transcription = Array.from(event.results).reduce((text, result) => {
+        return text.concat(result[0].transcript)
+    }, '')
+
+      setContent(transcription)
+    }
+
+    SpeechRecognition.onerror = (event) => {
+      console.log(event.error)
+    }
+
+    SpeechRecognition.start()
+  }
   function handleStopRecording() {
-    setIsRecording(false);
-  }
+  setIsRecording(false);
 
-//parei 26:39
+  if (SpeechRecognition !== null) {
+    SpeechRecognition.stop()
+  }
+}
 
   return (
     <Dialog.Root>
@@ -63,7 +100,7 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
 
       <Dialog.Portal>
         <Dialog.Overlay className="inset-0 fixed bg-black/60" />
-        <Dialog.Content className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[640px] h-[60vh] w-full bg-slate-700 rounded-md flex flex-col outline-none">
+        <Dialog.Content className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] md:h-[60vh] w-full bg-slate-700 md:rounded-md flex flex-col outline-none">
           <Dialog.Title className="sr-only">Adicionar Nota</Dialog.Title>
           <Dialog.Close className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-red-400">
             <X className="size-5" />
