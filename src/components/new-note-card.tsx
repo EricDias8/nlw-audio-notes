@@ -112,7 +112,7 @@ export function NewNoteCard({onNoteCreated}: NewNoteCardProps) {
 
               {shouldShowOnBoarding ? (
                 <p className="text-sm leading-6 text-slate-400">
-                  Comece <button type="button" onClick={handleStartRecording} className="font-medium text-lime-400 hover:underline">gravando uma nota </button> em áudio ou em <button type="button" onClick={handleStartEditor} className="font-medium text-lime-400 hover:underline"> texto </button>se preferir.
+                  Comece <button type="button" onClick={handleStartRecording} className="font-medium text-lime-400 hover:underline">gravando uma nota </button> em áudio ou em <button type="button" onClick={handleStartEditor} className="font-medium text-lime-400 hover:underline"> texto </button> se preferir.
                 </p>
               ) : (
                 <textarea
